@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Data;
+using System.Data.OleDb;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using ClosedXML.Excel;
+
 
 namespace Teste.Models
 {
@@ -50,6 +55,12 @@ namespace Teste.Models
             BirthDate = birthDate;
             BaseSalary = baseSalary;
             Department = department;
+        }
+
+        public Seller(string name, string email)
+        {
+            Name = name;
+            Email = email;
         }
 
         public void AddSales(SalesRecord sr) 
