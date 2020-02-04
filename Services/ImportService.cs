@@ -7,15 +7,18 @@ using Microsoft.EntityFrameworkCore;
 using Teste.Services.Exceptions;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Teste.Models.ViewModels;
+using Teste.Services;
 using System.IO;
 
 namespace Teste.Services
 {
-    public class SellerService
+    public class ImportService
     {
         private readonly TesteContext _context;
 
-        public SellerService(TesteContext context)
+        public ImportService(TesteContext context)
         {
             _context = context;
         }
@@ -36,68 +39,54 @@ namespace Teste.Services
             return await _context.Seller.Include(obj => obj.Department).FirstOrDefaultAsync(obj => obj.Id == id);
         }
 
-        public async Task RemoveAsync(int id)
+
+        public async Task<IXLWorksheet> Directory(IFormFile excelFile)
         {
-            try
-            {
-                var obj = await _context.Seller.FindAsync(id);
-                _context.Seller.Remove(obj);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException e)
-            {
-                throw new IntegrityException("Can't delete seller because he/she has sales");
-            }
-
-        }
-
-        public async Task UpdateAsync(Seller obj)
-        {
-            bool hasAny = await _context.Seller.AnyAsync(x => x.Id == obj.Id);
-            if (!hasAny)
-            {
-                throw new NotFoundException("Id not found");
-            }
-            try
-            {
-                _context.Update(obj);
-                await _context.SaveChangesAsync();
-            }
-            catch(DbUpdateConcurrencyException e)
-            {
-                throw new DbConcurrencyException(e.Message);
-            }
-
-        }
-
-
-        
-
-
-        public async Task<string[]> ListaAsync(IFormFile excelFile, string x, int linha)
-        {
-
-            List<string> listNome = new List<string>();
+            
             string str = Convert.ToString(excelFile.FileName);
             bool b1 = string.IsNullOrEmpty(str);
-            //FileInfo path = excelFile;
 
-            //Confere se algum arquivo foi selecionado
             if (b1 == true)
             {
-
-               return null;
+                return null;
             }
             else
             {
                 if (Path.GetExtension(str) == ".xls" || Path.GetExtension(str) == ".xlsx")
                 {
-                   var wb = new XLWorkbook("C:\\Users/wgomessi/Desktop/Teste/teste.xlsx");
+                    var wb = new XLWorkbook("C:\\Users/wgomessi/Desktop/Teste/teste.xlsx");
                     IXLWorksheet planilha = wb.Worksheet(1);
+                    return planilha;
+                }
+            }
+            return null;
+
+        }
 
 
-                    //var linha = 2;
-                    
+        public async Task<string[]> ListaAsync(IXLWorksheet planilha, string x)
+        {
+
+            List<string> listNome = new List<string>();
+            /*string str = Convert.ToString(excelFile.FileName);
+            bool b1 = string.IsNullOrEmpty(str);
+            //FileInfo path = excelFile;*/
+
+            //Confere se algum arquivo foi selecionado
+            //if (b1 == true)
+            //{
+
+           //     return null;
+            //}
+            //else
+           // {
+               // if (Path.GetExtension(str) == ".xls" || Path.GetExtension(str) == ".xlsx")
+                //{
+                 //   var wb = new XLWorkbook("C:\\Users/wgomessi/Desktop/Teste/teste.xlsx");
+                  //  IXLWorksheet planilha = wb.Worksheet(1);
+            
+
+                    var linha = 2;
                     while (true)
                     {
                         string nome = planilha.Cell(x + linha.ToString()).Value.ToString();
@@ -116,10 +105,10 @@ namespace Teste.Services
                         vet[cont] = y;
                         cont++;
                     }
-
+                    
                     return vet.ToArray();
 
-
+                    
 
                     //var seller = new Seller(vetNome[i], vetEmail[i]);
 
@@ -152,13 +141,12 @@ namespace Teste.Services
                      return View(viewModel);*/
 
 
-                }
+                //}
 
 
-            }
+            //}
 
             return null;
         }
-
     }
 }

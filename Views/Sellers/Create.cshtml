@@ -45,9 +45,10 @@
             @using (Html.BeginForm("Import", "Sellers", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 @Html.Raw(ViewBag.Error)
-                <span>Excel File</span><input type="file" name="excelFile" />
+                <span>Excel File</span><input type="file" name="excelFile" value="2"/>
                 <br />
                 <input type="submit" value="Import" />
+        <!--<a asp-action="Import" type="submit" name="excelFile" class="btn btn-default">Import</a>-->
             }
         </div>
     </div>

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using ClosedXML.Excel;
-
+using Microsoft.AspNetCore.Http;
 
 namespace Teste.Models
 {
@@ -43,6 +43,7 @@ namespace Teste.Models
         public int DepartmentId { get; set; }
         public ICollection<SalesRecord> Sales { get; set; } = new List<SalesRecord>();
 
+
         public Seller()
         {
         }
@@ -62,6 +63,8 @@ namespace Teste.Models
             Name = name;
             Email = email;
         }
+
+
 
         public void AddSales(SalesRecord sr) 
         {

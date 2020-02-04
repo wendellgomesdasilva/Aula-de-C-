@@ -25,12 +25,13 @@ namespace Teste.Controllers
     {
         private readonly SellerService _sellerService;
         private readonly DepartmentService _departmentService;
+        //private readonly ImportService _importService;
 
-        
-        public SellersController(SellerService sellerService, DepartmentService departmentService) 
+        public SellersController(SellerService sellerService, DepartmentService departmentService/*, ImportService importService*/) 
         {
             _sellerService = sellerService;
             _departmentService = departmentService;
+           // _importService = importService;
         }
 
         public async Task<IActionResult> Index()
@@ -58,6 +59,7 @@ namespace Teste.Controllers
                 return View(viewModel);
             }
             await _sellerService.InsertAsync(seller);
+            //return RedirectToAction(nameof(Index));
             return RedirectToAction(nameof(Index));
 
         }
@@ -162,96 +164,65 @@ namespace Teste.Controllers
         }
 
 
-        public async Task<IActionResult> Import()
+        /*public async Task<IActionResult> Import()
         {
             var departments = await _departmentService.FindAllAsync();
             var viewModel = new ImportViewModel { Departments = departments };
             return View(viewModel);
-        }
+        }*/
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Import(IFormFile excelFile)
-        {
-            List<string> listNome = new List<string>();
-            List<string> listEmail = new List<string>();
-            string str = Convert.ToString(excelFile.FileName);
-            bool b1 = string.IsNullOrEmpty(str);
-            //FileInfo path = excelFile;
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Import(IFormFile excelFile, int i)
+        //{
             
-            //Confere se algum arquivo foi selecionado
-            if(b1 == true)
-            {
+          //  return await Create();
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Import(IFormFile excelFile,  int i, int linha)
+        {
+            //if (excelFile != null)
+            //{
+                if (linha < 2) { linha = 2; }
+                var vetNome = await _sellerService.ListaAsync(excelFile, "A", linha);
+                var vetEmail = await _sellerService.ListaAsync(excelFile, "B", linha);
+                var seller = new Seller(vetNome[i], vetEmail[i]);
                 
-                return RedirectToAction(nameof(Create));
-            }
-            else
+                //var nextName = vetNome[i + 1];
+                //var nextEmail = vetEmail[i + 1];
+                var departments = await _departmentService.FindAllAsync();
+                var viewModel = new ImportViewModel { Seller = seller, Departments = departments, i = i, Linha = linha, ExcelFile = planilha };
+                return View(viewModel);
+
+                /*await _sellerService.InsertAsync(seller);
+
+                i++;
+                linha++;
+                return await Import(excelFile, nome, email, i, linha);*/
+           // }
+            /*else
             {
-                if (Path.GetExtension(str) == ".xls" || Path.GetExtension(str) == ".xlsx")
-                {
-                    var wb = new XLWorkbook("C:\\Users/wgomessi/Desktop/Teste/teste.xlsx");
-                    var planilha = wb.Worksheet(1);
+                if (linha < 2) { linha = 2; }
+                var seller2 = new Seller(nome[i], email[i]);
+                var departments2 = await _departmentService.FindAllAsync();
+                var viewModel2 = new ImportViewModel { Seller = seller2, Departments = departments2, ExcelFile = excelFile, ListNome = nome, ListEmail = email, i = i, Linha = linha };
+                return View(viewModel2);
+                //return View("Import");
 
-                    var linha = 2;
-                    while (true)
-                    {
-                        string nome = planilha.Cell("A" + linha.ToString()).Value.ToString();
+                /*await _sellerService.InsertAsync(seller2);
 
-                        if (string.IsNullOrEmpty(nome)) break;
+                i++;
+                linha++;
+                return await Import(excelFile, nome, email, i, linha);
 
-                        string email = planilha.Cell("B" + linha.ToString()).Value.ToString();
-
-                        listNome.Add(nome);
-                        listEmail.Add(email);
-                        linha++;
-                    }
+            }*/
 
 
-                    string[] vetNome = new string[listNome.Count];
-                    string[] vetEmail = new string[listEmail.Count];
-                    int cont = 0;
-                    foreach (string x in listNome)
-                    {
-                        vetNome[cont] = x;
-                        cont++;
-                    }
-                    cont = 0;
-                    foreach (string y in listEmail)
-                    {
-                        vetEmail[cont] = y;
-                        cont++;
-                    }
-                    
+            //return RedirectToAction(nameof(Index));
 
-                    for (int i = 0; i <= vetEmail.Length; i++)
-                    {
-                        var seller = new Seller(vetNome[i], vetEmail[i]);
-
-                        
-                        var departments = await _departmentService.FindAllAsync();
-                        var viewModel = new ImportViewModel { Seller = seller, Departments = departments };
-                        return View(viewModel);
-                        
-                        //await _sellerService.InsertAsync(seller);
-                        //return RedirectToAction(nameof(Index));
-
-
-                    }
-                    return RedirectToAction(nameof(Index));
-
-
-                    /* var seller = new Seller(listNome[0], listEmail[0]);
-                     var departments = await _departmentService.FindAllAsync();
-                     ImportViewModel viewModel = new ImportViewModel { Seller = seller, Departments = departments, ListNome = listNome, ListEmail = listEmail };
-                     return View(viewModel);*/
-
-
-                }
-               
-                
-            }
-            return await Create();
         }
         public async Task<IActionResult> CreateImport()
         {
@@ -262,20 +233,13 @@ namespace Teste.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateImport(string[] vetNome, string[] vetEmail)
+        public async Task<IActionResult> CreateImport(Seller seller, IFormFile excelFile, int i, int linha)
         {
-            for (int i = 0; i <= vetEmail.Length; i++)
-            {
-                var seller = new Seller(vetNome[i], vetEmail[i]);
+            await _sellerService.InsertAsync(seller);
 
-                var departments = await _departmentService.FindAllAsync();
-                ImportViewModel viewModel = new ImportViewModel { Seller = seller, Departments = departments };
-                await _sellerService.InsertAsync(seller);
-                return View(viewModel);
-                    
-                
-            }
-            return RedirectToAction(nameof(Index));
+            i++;
+            linha++;
+            return await Import(excelFile, i, linha);
         }
 
     }
