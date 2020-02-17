@@ -13,23 +13,15 @@ namespace Teste.Models.ViewModels
         public string Nome { get; set; }
         public string Email { get; set; }
         public Seller Seller { get; set; }
+        public TesteImport Import { get; set; }
         public int Linha { get; set; }
         public int i { get; set; }
         public IXLWorksheet ExcelFile { get; set; }
         public ICollection<Department> Departments { get; set; }
+        public ICollection<TesteImport> TesteImports { get; set; }
 
         public ICollection<string>ListNome { get; set; }
         public ICollection<string> ListEmail { get; set; }
 
-        /*public Seller GetSeller()
-         {
-             return Seller;
-         }
-
-         public void SetSeller()
-         {
-             Seller.Name = Nome;
-             Seller.Email = Email;
-         }*/
     }
 }

@@ -68,85 +68,58 @@ namespace Teste.Services
         {
 
             List<string> listNome = new List<string>();
-            /*string str = Convert.ToString(excelFile.FileName);
-            bool b1 = string.IsNullOrEmpty(str);
-            //FileInfo path = excelFile;*/
+            var linha = 2;
+            while (true)
+            {
+                string nome = planilha.Cell(x + linha.ToString()).Value.ToString();
 
-            //Confere se algum arquivo foi selecionado
-            //if (b1 == true)
-            //{
+                if (string.IsNullOrEmpty(nome)) break;
 
-           //     return null;
-            //}
-            //else
-           // {
-               // if (Path.GetExtension(str) == ".xls" || Path.GetExtension(str) == ".xlsx")
-                //{
-                 //   var wb = new XLWorkbook("C:\\Users/wgomessi/Desktop/Teste/teste.xlsx");
-                  //  IXLWorksheet planilha = wb.Worksheet(1);
-            
-
-                    var linha = 2;
-                    while (true)
-                    {
-                        string nome = planilha.Cell(x + linha.ToString()).Value.ToString();
-
-                        if (string.IsNullOrEmpty(nome)) break;
-
-                        listNome.Add(nome);
-                        linha++;
-                    }
+                listNome.Add(nome);
+                linha++;
+            }
 
 
-                    string[] vet = new string[listNome.Count];
-                    int cont = 0;
-                    foreach (string y in listNome)
-                    {
-                        vet[cont] = y;
-                        cont++;
-                    }
+            string[] vet = new string[listNome.Count];
+            int cont = 0;
+            foreach (string y in listNome)
+            {
+                vet[cont] = y;
+                cont++;
+            }
                     
-                    return vet.ToArray();
+            return vet.ToArray();
 
-                    
+        }
 
-                    //var seller = new Seller(vetNome[i], vetEmail[i]);
+        public async Task InsertTesteAsync(TesteImport obj)
+        {
+            _context.Add(obj);
+            await _context.SaveChangesAsync();
+        }
 
-                    //var departments = await _departmentService.FindAllAsync();
-                    //var viewModel = new ImportViewModel { Seller = seller, Departments = departments };
-                    //RedirectToAction(nameof(viewModel));
-                    //await _sellerService.InsertAsync(seller);
-                    //return View(viewModel);
+        public async Task RemoveTesteAsync()
+        {
+            try
+            {
+                var obj = _context.TesteImport.Count();
+                for (int i = 1; i <= obj; i++)
+                {
+                    var teste = await _context.TesteImport.FindAsync(i);
+                    _context.TesteImport.Remove(teste);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (DbUpdateException e)
+            {
+                throw new IntegrityException("Can't delete seller because he/she has sales");
+            }
 
-                    //CreateImport(seller, vetNome, vetNome, viewModel);
+        }
 
-
-
-
-
-
-
-
-
-                    //return RedirectToAction(nameof(Index));
-
-
-
-                    //return RedirectToAction(nameof(Index));
-
-
-                    /* var seller = new Seller(listNome[0], listEmail[0]);
-                     var departments = await _departmentService.FindAllAsync();
-                     ImportViewModel viewModel = new ImportViewModel { Seller = seller, Departments = departments, ListNome = listNome, ListEmail = listEmail };
-                     return View(viewModel);*/
-
-
-                //}
-
-
-            //}
-
-            return null;
+        public async Task<TesteImport> TesteFindAsync(int i) 
+        {
+            return TesteImport.Where(t => t.Name = i);
         }
     }
 }

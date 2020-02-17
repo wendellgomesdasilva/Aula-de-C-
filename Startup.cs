@@ -39,6 +39,7 @@ namespace Teste
             services.AddScoped<SellerService>();
             services.AddScoped<DepartmentService>();
             services.AddScoped<SalesRecordService>();
+            services.AddScoped<ImportService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,6 +79,7 @@ namespace Teste
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+            
         }
     }
 }

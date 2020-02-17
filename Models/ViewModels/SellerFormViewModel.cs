@@ -7,5 +7,6 @@ namespace Teste.Models.ViewModels
     {
         public Seller Seller { get; set; }
         public ICollection<Department> Departments { get; set; }
+        public ICollection<TesteImport> TesteImports { get; set; }
     }
 }

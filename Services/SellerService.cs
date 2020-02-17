@@ -119,39 +119,6 @@ namespace Teste.Services
 
                     return vet.ToArray();
 
-
-
-                    //var seller = new Seller(vetNome[i], vetEmail[i]);
-
-                    //var departments = await _departmentService.FindAllAsync();
-                    //var viewModel = new ImportViewModel { Seller = seller, Departments = departments };
-                    //RedirectToAction(nameof(viewModel));
-                    //await _sellerService.InsertAsync(seller);
-                    //return View(viewModel);
-
-                    //CreateImport(seller, vetNome, vetNome, viewModel);
-
-
-
-
-
-
-
-
-
-                    //return RedirectToAction(nameof(Index));
-
-
-
-                    //return RedirectToAction(nameof(Index));
-
-
-                    /* var seller = new Seller(listNome[0], listEmail[0]);
-                     var departments = await _departmentService.FindAllAsync();
-                     ImportViewModel viewModel = new ImportViewModel { Seller = seller, Departments = departments, ListNome = listNome, ListEmail = listEmail };
-                     return View(viewModel);*/
-
-
                 }
 
 
@@ -159,6 +126,8 @@ namespace Teste.Services
 
             return null;
         }
+
+        
 
     }
 }
